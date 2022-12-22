@@ -30,7 +30,7 @@ inputs:
 
   # Inputs for "update-registry-password"
   registry_password:
-    description: "Registry name to update password"
+    description: "Registry password to be placed if you have a registry with an AWS user"
     required: false
     default: ""
 
