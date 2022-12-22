@@ -1,30 +1,66 @@
-import { expect, test } from "@jest/globals";
-import * as cp from "child_process";
-import * as process from "process";
-import * as path from "path";
+import "dotenv/config";
 
-import { wait } from "../src/wait";
+import { test } from "@jest/globals";
+import cp from "child_process";
+import path from "path";
+import process from "process";
 
-test("throws invalid number", async () => {
-  const input = parseInt("foo", 10);
-  await expect(wait(input)).rejects.toThrow("milliseconds not a number");
-});
+type TestArgs = Parameters<typeof test>;
 
-test("wait 500 ms", async () => {
-  const start = new Date();
-  await wait(500);
-  const end = new Date();
-  var delta = Math.abs(end.getTime() - start.getTime());
-  expect(delta).toBeGreaterThan(450);
-});
+const testIf = (condition: boolean, ...args: TestArgs) =>
+  condition ? test(...args) : test.skip(...args);
 
 // shows how the runner will run a javascript action with env / stdout protocol
-test("test runs", () => {
-  process.env["INPUT_MILLISECONDS"] = "500";
+
+const shouldRunTests = process.env.RUN_CAPROVER_TESTS === "true";
+
+const APP_NAME = "test-123";
+
+testIf(shouldRunTests, "test runs", () => {
+  launchWithConfig({
+    INPUT_ACTION: "deploy",
+  });
+});
+
+testIf(shouldRunTests, "create an app with db", () => {
+  launchWithConfig({
+    INPUT_APP: APP_NAME,
+    INPUT_ACTION: "create-app",
+  });
+});
+
+testIf(shouldRunTests, "delete an app", () => {
+  launchWithConfig({
+    INPUT_APP: APP_NAME,
+    INPUT_ACTION: "delete-app",
+  });
+  launchWithConfig({
+    INPUT_APP: `${APP_NAME}-db`,
+    INPUT_ACTION: "delete-app",
+  });
+});
+
+testIf(shouldRunTests, "update registry password", () => {
+  launchWithConfig({
+    INPUT_APP: APP_NAME,
+    INPUT_ACTION: "update-registry-password",
+    INPUT_REGISTRY_PASSWORD: process.env.INPUT_REGISTRY_PASSWORD || "test",
+  });
+});
+
+function launchWithConfig(config: Record<string, string>) {
   const np = process.execPath;
   const ip = path.join(__dirname, "..", "lib", "main.js");
   const options: cp.ExecFileSyncOptions = {
-    env: process.env,
+    env: { ...process.env, ...config },
   };
   console.log(cp.execFileSync(np, [ip], options).toString());
-});
+}
+
+// INPUT_HOST: process.env.INPUT_HOST || "",
+// INPUT_PASSWORD: process.env.INPUT_PASSWORD || "",
+// INPUT_APP: process.env.INPUT_APP || "test-123",
+// INPUT_ACTION: process.env.INPUT_ACTION || "create-app",
+// INPUT_IMAGE: process.env.INPUT_IMAGE || "",
+// INPUT_FAIL_IF_EXISTS: process.env.INPUT_FAIL_IF_EXISTS || "",
+// INPUT_REGISTRY_PASSWORD: process.env.INPUT_REGISTRY_PASSWORD || "",

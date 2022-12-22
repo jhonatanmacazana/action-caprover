@@ -1,11 +1,39 @@
-name: "Your name here"
-description: "Provide a description here"
-author: "Your name or organization here"
+name: "GitHub Action for caprover"
+description: "Provides an action for additional features, other than the CLI provides, like create or destroy apps, and update registry password"
+author: "jmacazana"
 inputs:
-  milliseconds: # change this
+  host:
+    description: "CapRover server url i.e., https://captain.your-domain.com"
     required: true
-    description: "input description here"
-    default: "default value if applicable"
+  password:
+    description: "CapRover admin password. Tokens won't work if action other than 'deploy'"
+    required: true
+  app:
+    description: "App name on CapRover server"
+    required: true
+  action:
+    description: "Action to be performed. Possible values: deploy, create-app, delete-app, update-registry-password"
+    required: false
+    default: "deploy"
+
+  # Inputs for "deploy"
+  image:
+    description: "Docker image to be deployed"
+    required: false
+    default: ""
+
+  # Inputs for "create-app"
+  fail_if_exists:
+    description: "If true, action will fail if app already exists, otherwise, it won't do anything"
+    required: false
+    default: ""
+
+  # Inputs for "update-registry-password"
+  registry_password:
+    description: "Registry name to update password"
+    required: false
+    default: ""
+
 runs:
   using: "node16"
   main: "dist/index.js"
