@@ -1,5 +1,5 @@
 name: "GitHub Action for caprover"
-description: "Provides an action for additional features, other than the CLI provides, like create or destroy apps, and update registry password"
+description: "Additional features, other than the CLI provides, like create or destroy apps, and update registry password"
 author: "jmacazana"
 inputs:
   host:
