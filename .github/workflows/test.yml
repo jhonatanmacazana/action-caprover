@@ -50,11 +50,3 @@ jobs:
           password: "${{ secrets.CAPROVER_PASSWORD }}"
           app: test-app-from-gh-action
           action: delete-app
-
-      - name: Test delete app db
-        uses: ./
-        with:
-          host: "${{ secrets.CAPROVER_URL }}"
-          password: "${{ secrets.CAPROVER_PASSWORD }}"
-          app: test-app-from-gh-action-db
-          action: delete-app
