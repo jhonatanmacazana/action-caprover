@@ -1,6 +1,6 @@
 name: "GitHub Action for caprover"
 description: "Additional features, other than the CLI provides, like create or destroy apps, and update registry password"
-author: "jmacazana"
+author: "jhonatanmacazana"
 inputs:
   host:
     description: "CapRover server url i.e., https://captain.your-domain.com"
